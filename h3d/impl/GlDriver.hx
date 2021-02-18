@@ -379,9 +379,11 @@ class GlDriver extends Driver {
 			t = t.next;
 		}
 		if( shader.bufferCount > 0 ) {
-			s.buffers = [for( i in 0...shader.bufferCount ) gl.getUniformBlockIndex(p.p,"uniform_buffer"+i)];
+			s.buffers = [for( i in 0...shader.bufferCount ) gl.getUniformBlockIndex(p.p,(shader.vertex?"vertex_":"")+"uniform_buffer"+i)];
+			var start = 0;
+			if( !s.vertex ) start = rt.vertex.bufferCount;
 			for( i in 0...shader.bufferCount )
-				gl.uniformBlockBinding(p.p,s.buffers[i],i);
+				gl.uniformBlockBinding(p.p,s.buffers[i],i + start);
 		}
 	}
 
@@ -539,8 +541,11 @@ class GlDriver extends Driver {
 			}
 		case Buffers:
 			if( s.buffers != null ) {
+				var start = 0;
+				if( !s.vertex && curShader.vertex.buffers != null )
+					start = curShader.vertex.buffers.length;
 				for( i in 0...s.buffers.length )
-					gl.bindBufferBase(GL2.UNIFORM_BUFFER, i, @:privateAccess buf.buffers[i].buffer.vbuf.b);
+					gl.bindBufferBase(GL2.UNIFORM_BUFFER, i + start, @:privateAccess buf.buffers[i].buffer.vbuf.b);
 			}
 		case Textures:
 			var tcount = s.textures.length;

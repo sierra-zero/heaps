@@ -63,6 +63,7 @@ class Printer {
 				case PerInstance(n): "perInstance("+n+")";
 				case Doc(s): "doc(\"" + StringTools.replace(s, '"', '\\"') + "\")";
 				case Borrow(s): "borrow(" + s + ")";
+				case Sampler(s): "sampler("+ s + ")";
 				}) + " ");
 		}
 		if( v.kind != defKind )
@@ -284,6 +285,7 @@ class Printer {
 			tabs = old;
 			add("\n" + tabs + "}");
 		case TMeta(m, args, e):
+			add("@");
 			add(m);
 			if( args.length > 0 ) {
 				add("(");

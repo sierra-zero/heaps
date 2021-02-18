@@ -682,7 +682,6 @@ class Checker {
 					for( q in v.qualifiers )
 						switch( q ) {
 						case Const(_): v.kind = Param;
-						case Private: v.kind = Var;
 						default:
 						}
 				}
@@ -780,7 +779,7 @@ class Checker {
 			tv.qualifiers = v.qualifiers;
 			for( q in v.qualifiers )
 				switch( q ) {
-				case Private: if( tv.kind != Var ) error("@private only allowed on varying", pos);
+				case Private:
 				case Const(_):
 					var p = parent;
 					while( p != null ) {
@@ -811,6 +810,12 @@ class Checker {
 					}
 				case Borrow(source):
 					if ( v.kind != Local ) error("Borrow should not have a type qualifier", pos);
+				case Sampler(_):
+					switch( v.type ) {
+					case TArray(t, _) if( t.isSampler() ):
+					case t if( t.isSampler() ):
+					default: error("Sampler should be on sampler type or sampler array", pos);
+					}
 				case Ignore, Doc(_):
 				}
 		}

@@ -628,6 +628,25 @@ class HtmlTextComp extends TextComp implements domkit.Component.ComponentDecl<h2
 	}
 }
 
+@:uiComp("scale-grid") @:domkitDecl
+class ScaleGridComp extends DrawableComp implements domkit.Component.ComponentDecl<h2d.ScaleGrid> {
+
+	@:p var ignoreScale : Bool;
+	@:p var tileBorders : Bool;
+
+	static function create( parent : h2d.Object ) {
+		return new h2d.ScaleGrid(h2d.Tile.fromColor(0xFF00FF,32,32,0.9), 0, 0,parent);
+	}
+
+	static function set_ignoreScale(o : h2d.ScaleGrid, v) {
+		o.ignoreScale = v;
+	}
+
+	static function set_tileBorders(o : h2d.ScaleGrid, v) {
+		o.tileBorders = v;
+	}
+
+}
 
 @:uiComp("flow") @:domkitDecl
 class FlowComp extends ObjectComp implements domkit.Component.ComponentDecl<h2d.Flow> {
@@ -738,7 +757,7 @@ class FlowComp extends ObjectComp implements domkit.Component.ComponentDecl<h2d.
 		}
 		var bg = @:privateAccess o.background;
 		if( (bg.dom != null) != id )
-			bg.dom = id ? domkit.Properties.create("drawable",bg,{ id : "background" }) : null;
+			bg.dom = id ? domkit.Properties.create("scale-grid",bg,{ id : "background" }) : null;
 	}
 
 	static function set_backgroundAlpha( o : h2d.Flow, v ) {
@@ -821,6 +840,16 @@ class FlowComp extends ObjectComp implements domkit.Component.ComponentDecl<h2d.
 
 	static function set_overflow( o : h2d.Flow, v ) {
 		o.overflow = v;
+		if( v == Scroll ) @:privateAccess {
+			if( o.scrollBar.dom == null ) {
+				o.scrollBar.dom = domkit.Properties.create("flow", o.scrollBar);
+				o.scrollBar.dom.addClass("scrollbar");
+			}
+			if( o.scrollBarCursor.dom == null ) {
+				o.scrollBarCursor.dom = domkit.Properties.create("flow", o.scrollBarCursor);
+				o.scrollBarCursor.dom.addClass("cursor");
+			}
+		}
 	}
 
 	static function set_reverse( o : h2d.Flow, v ) {
